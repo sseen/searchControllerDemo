@@ -10,7 +10,30 @@ import UIKit
 
 class ViewController: UIViewController {
     var tableView: UITableView!
-    var searchController: UISearchController!
+    var searchController: UISearchController!  {
+        // 建立 UISearchController 並設置搜尋控制器為 nil
+        let _searchController = UISearchController(searchResultsController: nil)
+        
+        // 將更新搜尋結果的對象設為 self
+        _searchController.searchResultsUpdater = self
+        
+        // 搜尋時是否隱藏 NavigationBar
+        // 這個範例沒有使用 NavigationBar 所以設置什麼沒有影響
+        _searchController.hidesNavigationBarDuringPresentation = true
+        
+        // 搜尋時是否使用燈箱效果 (會將畫面變暗以集中搜尋焦點)
+        _searchController.dimsBackgroundDuringPresentation = false
+        
+        // 搜尋框的樣式
+        _searchController.searchBar.searchBarStyle = .prominent
+        
+        // 設置搜尋框的尺寸為自適應
+        // 因為會擺在 tableView 的 header
+        // 所以尺寸會與 tableView 的 header 一樣
+        _searchController.searchBar.sizeToFit()
+        
+        return _searchController
+    }
     
     let cities = [
         "臺北市","新北市","桃園市","臺中市","臺南市","高雄市","基隆市","新竹市","嘉義市","新竹縣",
@@ -36,27 +59,6 @@ class ViewController: UIViewController {
         tableView.dataSource = self
         self.view.addSubview(tableView)
         
-        
-        // 建立 UISearchController 並設置搜尋控制器為 nil
-        searchController = UISearchController(searchResultsController: nil)
-        
-        // 將更新搜尋結果的對象設為 self
-        searchController.searchResultsUpdater = self
-        
-        // 搜尋時是否隱藏 NavigationBar
-        // 這個範例沒有使用 NavigationBar 所以設置什麼沒有影響
-        searchController.hidesNavigationBarDuringPresentation = false
-        
-        // 搜尋時是否使用燈箱效果 (會將畫面變暗以集中搜尋焦點)
-        searchController.dimsBackgroundDuringPresentation = false
-        
-        // 搜尋框的樣式
-        searchController.searchBar.searchBarStyle = .prominent
-        
-        // 設置搜尋框的尺寸為自適應
-        // 因為會擺在 tableView 的 header
-        // 所以尺寸會與 tableView 的 header 一樣
-        searchController.searchBar.sizeToFit()
         
         // 將搜尋框擺在 tableView 的 header
         self.tableView.tableHeaderView = searchController.searchBar
@@ -96,6 +98,11 @@ extension ViewController: UITableViewDelegate {
         } else {
             print("你選擇的是 \(cities[indexPath.row])")
         }
+        
+        let vc:ViewController = UIStoryboard(name: "Main", bundle: nil).instantiateViewController(withIdentifier: "ViewController") as! ViewController
+        vc.searchController.searchBar.searchBarStyle = .minimal
+        vc.navigationItem.titleView = vc.searchController.searchBar
+        self.navigationController?.pushViewController(vc, animated: true)
     }
 }
 
